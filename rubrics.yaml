@@ -1,0 +1,55 @@
+rubrics:
+  - importance: REQUIRED
+    type: DATA_HANDLING
+    criterion: Uses the PNG image referenced by the image column together with the question and answer options; does not solve the task as text-only multiple choice.
+    rationale: The same question templates map to different answers depending on visual scene state, so image evidence is essential.
+
+  - importance: REQUIRED
+    type: DATA_HANDLING
+    criterion: Produces exactly one answer letter A-E for every id in test.csv with no missing, duplicate, or extra ids.
+    rationale: The grader aligns by question id and rejects malformed submissions.
+
+  - importance: REQUIRED
+    type: MODELING
+    criterion: Does not use hidden scene traces, private answer labels, external datasets, internet access, or manual labeling of the hidden test set.
+    rationale: The challenge evaluates general image-question reasoning from the public artifacts only.
+
+  - importance: REQUIRED
+    type: TRAINING
+    criterion: Evaluates performance by query type or similar grouped validation, not only overall accuracy.
+    rationale: The official metric includes worst-query-type and worst-group penalties; overall accuracy can hide failures on route, cable, or low-light questions.
+
+  - importance: RECOMMENDED
+    type: FEATURE_ENGINEERING
+    criterion: Parses seven-segment displays for the PSI gauge, lot code, and route strip instead of relying on nearby text priors.
+    rationale: Several question types require reading small rendered digits under glare, low light, or clutter.
+
+  - importance: RECOMMENDED
+    type: FEATURE_ENGINEERING
+    criterion: Uses color segmentation or visual matching for wafer slots, status LEDs, cable colors, and magenta defect markers.
+    rationale: These image regions encode the answer for slot_color, led_state, cable_connection, and defect_location rows.
+
+  - importance: RECOMMENDED
+    type: FEATURE_ENGINEERING
+    criterion: Incorporates spatial reasoning over fixed station zones, cassette zones, ports, route order, and robot arm direction.
+    rationale: The task requires more than object presence; it asks which item is where or what follows what.
+
+  - importance: RECOMMENDED
+    type: MODELING
+    criterion: Handles the easy, medium, and hard visual tiers, including OOD conditions such as low light, glare, dense clutter, blue color cast, and partial occlusion.
+    rationale: Hidden group scoring rewards solutions that remain accurate as visual difficulty increases, not only normal-light examples.
+
+  - importance: RECOMMENDED
+    type: TRAINING
+    criterion: Uses a scene-level validation split so all questions from a held-out image stay together.
+    rationale: Splitting individual rows from the same image across train and validation leaks scene-specific visual state.
+
+  - importance: RECOMMENDED
+    type: CODE_QUALITY
+    criterion: Reads inputs from /dataset/public, resolves image paths relative to that directory, and writes only /working/submission.csv.
+    rationale: The solution must run reproducibly in the Eris/Kaggle-style environment.
+
+  - importance: UNIVERSAL
+    type: COMMUNICATION
+    criterion: Explains how the solution uses visual evidence and how it guards against weak performance on hidden OOD groups.
+    rationale: The benchmark is designed to test balanced multimodal reasoning, so the reasoning should be visible.
